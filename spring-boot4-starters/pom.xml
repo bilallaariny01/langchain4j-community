@@ -28,6 +28,7 @@
         <module>langchain4j-community-dashscope-spring-boot4-starter</module>
         <module>langchain4j-community-neo4j-spring-boot4-starter</module>
         <module>langchain4j-community-oceanbase-spring-boot4-starter</module>
+        <module>langchain4j-community-oracle-spring-boot4-starter</module>
         <module>langchain4j-community-qianfan-spring-boot4-starter</module>
         <module>langchain4j-community-redis-spring-boot4-starter</module>
         <module>langchain4j-community-valkey-spring-boot4-starter</module>

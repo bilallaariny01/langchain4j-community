@@ -1,0 +1,2 @@
+dev.langchain4j.community.store.oracle.spring.OracleEmbeddingStoreAutoConfiguration
+dev.langchain4j.community.store.oracle.spring.OracleMemoryStoreAutoConfiguration
