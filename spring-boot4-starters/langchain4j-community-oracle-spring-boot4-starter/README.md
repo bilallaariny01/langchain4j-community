@@ -5,7 +5,7 @@ Spring Boot starter that auto-configures LangChain4j Oracle-backed stores.
 It creates:
 
 - an `EmbeddingStore<TextSegment>` backed by `OracleEmbeddingStore`
-- a `ChatMemoryStore` backed by `OracleMemoryStore`
+- a `ChatMemoryStore` backed by `OracleChatMemoryStore`
 
 Both stores are created only when a `DataSource` bean is available and the corresponding feature is enabled.
 
@@ -53,7 +53,10 @@ langchain4j:
       chat-memory:
         enabled: true
         table-name: chat_memory
-        ttl: 7d
+        create-table: true
+        memory-id-column-name: memory_id
+        content-column-name: content
+        content-column-type: CLOB
 ```
 
 Then inject the stores where you need them:
@@ -96,7 +99,7 @@ class AiStorageService {
 - `langchain4j.community.oracle.chat-memory.enabled=true`, or the property is omitted
 - an Oracle-compatible `DataSource` bean exists
 - no other `ChatMemoryStore` bean is already defined
-- `langchain4j.community.oracle.chat-memory.table-name` is set
+- `langchain4j.community.oracle.chat-memory.table-name` is not blank; it defaults to `chat_memory`
 
 ## Configuration Properties
 
@@ -122,9 +125,10 @@ Prefix: `langchain4j.community.oracle.chat-memory`
 | --- | --- | --- |
 | `enabled` | `true` | Enables or disables Oracle chat memory auto-configuration. |
 | `table-name` | `chat_memory` | Oracle table used to persist chat memory entries. |
-| `ttl` | `PT0S` | Time-to-live for chat memory entries. Use `PT0S` to disable expiration. |
-
-Spring Boot accepts ISO-8601 durations such as `PT1H` and simple suffix formats such as `30s`, `5m`, `1h`, or `7d`.
+| `create-table` | `true` | Creates the chat memory table when the store is built. |
+| `memory-id-column-name` | `MEMORY_ID` | Oracle column used to store chat memory IDs. |
+| `content-column-name` | `CONTENT` | Oracle column used to store serialized chat messages. |
+| `content-column-type` | `CLOB` | Content storage type. Use `CLOB` for broad compatibility or `JSON` for native Oracle JSON columns. |
 
 ## Disabling Auto-Configuration
 

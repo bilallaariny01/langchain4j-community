@@ -2,8 +2,8 @@ package dev.langchain4j.community.store.oracle.spring;
 
 import javax.sql.DataSource;
 
-import dev.langchain4j.store.chatmemory.oracle.OracleMemoryStore;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import dev.langchain4j.store.memory.chat.oracle.OracleChatMemoryStore;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,13 +17,13 @@ import static dev.langchain4j.community.store.oracle.spring.OracleMemoryStorePro
 /**
  * Spring Boot auto-configuration for Oracle-backed {@link ChatMemoryStore}.
  * <p>
- * Creates a {@link ChatMemoryStore} bean backed by {@link OracleMemoryStore} when enabled and
+ * Creates a {@link ChatMemoryStore} bean backed by {@link OracleChatMemoryStore} when enabled and
  * when a {@link DataSource} bean is available.
  */
 @AutoConfiguration
 @EnableConfigurationProperties(OracleMemoryStoreProperties.class)
 @ConditionalOnProperty(prefix = CONFIG_PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnClass({DataSource.class, OracleMemoryStore.class, ChatMemoryStore.class})
+@ConditionalOnClass({DataSource.class, OracleChatMemoryStore.class, ChatMemoryStore.class})
 @ConditionalOnBean(DataSource.class)
 public class OracleMemoryStoreAutoConfiguration {
 
@@ -39,16 +39,23 @@ public class OracleMemoryStoreAutoConfiguration {
     @ConditionalOnMissingBean(ChatMemoryStore.class)
     public ChatMemoryStore oracleChatMemoryStore(
             DataSource dataSource,
-            OracleMemoryStoreProperties properties) throws Exception {
+            OracleMemoryStoreProperties properties) {
 
         if (properties.getTableName() == null || properties.getTableName().isBlank()) {
             throw new IllegalStateException("Property " + CONFIG_PREFIX + ".table-name must be set");
         }
 
-        return OracleMemoryStore.builder()
+        OracleChatMemoryStore.Builder builder = OracleChatMemoryStore.builder()
                 .dataSource(dataSource)
                 .tableName(properties.getTableName())
-                .ttl(properties.getTtl())
-                .build();
+                .memoryIdColumnName(properties.getMemoryIdColumnName())
+                .contentColumnName(properties.getContentColumnName())
+                .contentColumnType(properties.getContentColumnType());
+
+        if (properties.isCreateTable()) {
+            builder.createTable();
+        }
+
+        return builder.build();
     }
 }

@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 class OracleTestContainerDataSourceConfiguration {
 
     private static final OracleContainer ORACLE = new OracleContainer(
-            DockerImageName.parse("gvenzl/oracle-free:23-slim-faststart"));
+            DockerImageName.parse("gvenzl/oracle-free:23-faststart"));
 
     @Bean
     DataSource dataSource() throws Exception {

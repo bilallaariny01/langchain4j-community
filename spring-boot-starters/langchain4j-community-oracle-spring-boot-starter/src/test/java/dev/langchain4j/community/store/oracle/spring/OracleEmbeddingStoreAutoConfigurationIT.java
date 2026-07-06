@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2q.AllMiniLmL6V2QuantizedEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -34,7 +34,7 @@ class OracleEmbeddingStoreAutoConfigurationIT {
      */
     @Test
     void should_create_table_and_store_and_search_embedding() {
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        EmbeddingModel embeddingModel = new AllMiniLmL6V2QuantizedEmbeddingModel();
         TextSegment segment = TextSegment.from("Berlin is the capital of Germany");
         Embedding embedding = embeddingModel.embed(segment.text()).content();
 
@@ -81,7 +81,7 @@ class OracleEmbeddingStoreAutoConfigurationIT {
                     EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
                     assertThat(embeddingModel)
                             .isNotNull()
-                            .isExactlyInstanceOf(AllMiniLmL6V2EmbeddingModel.class);
+                            .isExactlyInstanceOf(AllMiniLmL6V2QuantizedEmbeddingModel.class);
                     assertThat(context).hasSingleBean(EmbeddingStore.class);
                     assertTableExists(context.getBean(DataSource.class), tableName);
                 });

@@ -39,7 +39,8 @@ class OracleMemoryStoreAutoConfigurationIT {
                 .withPropertyValues(
                         "langchain4j.community.oracle.chat-memory.enabled=true",
                         "langchain4j.community.oracle.chat-memory.table-name=" + tableName,
-                        "langchain4j.community.oracle.chat-memory.ttl=PT1H"
+                        "langchain4j.community.oracle.chat-memory.create-table=true",
+                        "langchain4j.community.oracle.chat-memory.content-column-type=CLOB"
                 )
                 .run(context -> {
                     assertThat(context).hasNotFailed();

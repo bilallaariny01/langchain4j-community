@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import dev.langchain4j.store.memory.chat.oracle.OracleChatMemoryStore;
 import oracle.jdbc.pool.OracleDataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -27,7 +28,7 @@ class OracleMemoryStoreAutoConfigurationTests {
      * and a {@link DataSource} bean is available.
      */
     @Test
-    void ecreatesOracleMemoryStoreWhenEnabledAndDataSourceProvided() {
+    void createsOracleMemoryStoreWhenEnabledAndDataSourceProvided() {
         if (!shouldRunWithRealOracle()) {
             return;
         }
@@ -35,11 +36,36 @@ class OracleMemoryStoreAutoConfigurationTests {
                 .withUserConfiguration(DataSourceConfiguration.class)
                 .withPropertyValues(
                         "langchain4j.community.oracle.chat-memory.enabled=true",
-                        "langchain4j.community.oracle.chat-memory.table-name=chat_memory_test"
+                        "langchain4j.community.oracle.chat-memory.table-name=chat_memory_test",
+                        "langchain4j.community.oracle.chat-memory.create-table=true"
                 )
                 .run(context -> {
                     assertThat(context).hasNotFailed();
                     assertThat(context).hasSingleBean(ChatMemoryStore.class);
+                    assertThat(context).hasSingleBean(OracleMemoryStoreProperties.class);
+                });
+    }
+
+    /**
+     * Verifies that the new Oracle chat memory builder options are bound without needing
+     * a live database connection when table creation is disabled.
+     */
+    @Test
+    void createsOracleChatMemoryStoreWhenCreateTableDisabled() {
+        contextRunner
+                .withUserConfiguration(DataSourceConfiguration.class)
+                .withPropertyValues(
+                        "langchain4j.community.oracle.chat-memory.enabled=true",
+                        "langchain4j.community.oracle.chat-memory.table-name=chat_memory_test",
+                        "langchain4j.community.oracle.chat-memory.create-table=false",
+                        "langchain4j.community.oracle.chat-memory.memory-id-column-name=session_id",
+                        "langchain4j.community.oracle.chat-memory.content-column-name=messages_json",
+                        "langchain4j.community.oracle.chat-memory.content-column-type=JSON"
+                )
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context).hasSingleBean(ChatMemoryStore.class);
+                    assertThat(context.getBean(ChatMemoryStore.class)).isInstanceOf(OracleChatMemoryStore.class);
                     assertThat(context).hasSingleBean(OracleMemoryStoreProperties.class);
                 });
     }

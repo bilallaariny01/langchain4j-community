@@ -12,9 +12,9 @@
 
     <properties>
         <jdbc.version>23.8.0.25.04</jdbc.version>
-        <langchain4j.core.version>1.12.0-SNAPSHOT</langchain4j.core.version>
-        <langchain4j.oracle.version>1.12.0-beta20-SNAPSHOT</langchain4j.oracle.version>
-        <langchain4j.embeddings.version>1.12.0-beta20-SNAPSHOT</langchain4j.embeddings.version>
+        <langchain4j.core.version>1.17.0-SNAPSHOT</langchain4j.core.version>
+        <langchain4j.oracle.version>1.17.0-beta27-SNAPSHOT</langchain4j.oracle.version>
+        <langchain4j.embeddings.version>1.17.0-beta27-SNAPSHOT</langchain4j.embeddings.version>
         <testcontainers.version>1.21.3</testcontainers.version>
     </properties>
 
